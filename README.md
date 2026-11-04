@@ -20,27 +20,31 @@ npm run preview
 
 正式網站檔案會輸出至 `dist/`。部署前請確認鍵盤輸入、關卡解鎖與重新整理後的進度保存正常。
 
-## 部署到 Cloudflare Pages
+## 部署到 Cloudflare Pages（CLI）
 
-1. 將此專案推送到 GitHub 儲存庫。
-2. 在 Cloudflare 控制台進入 **Workers & Pages → Create application → Pages → Import an existing Git repository**，連結該儲存庫。
-3. 設定以下建置選項：
+專案使用 Wrangler CLI 將本機建置好的 `dist/` 上傳到 Cloudflare Pages。程式碼保存在 [GitHub 私人儲存庫](https://github.com/nickycho/typing-game)。
 
-   | 設定 | 值 |
-   | --- | --- |
-   | Production branch | `main` |
-   | Framework preset | React (Vite) |
-   | Build command | `npm run build` |
-   | Build output directory | `dist` |
-   | Root directory | 儲存庫根目錄 |
+首次部署前，先登入 Cloudflare 並建立 Pages 專案：
 
-4. 選擇 **Save and Deploy**。成功後可分享 Cloudflare 提供的 `*.pages.dev` 網址。
-5. 後續推送到 `main` 時，Cloudflare Pages 會自動建置並更新正式網站。
+```bash
+npx wrangler login
+npx wrangler pages project create keybloom-typing-game --production-branch main
+```
 
-此版本沒有後端 API，不需設定 API 金鑰或資料庫。Cloudflare Pages 會讀取 `.node-version` 使用指定的 Node.js 版本。
+登入時需在瀏覽器完成授權。之後首次上線與每次更新都使用：
 
-- [Cloudflare React 部署說明](https://developers.cloudflare.com/pages/framework-guides/deploy-a-react-site/)
-- [Cloudflare 建置環境與 Node.js 版本](https://developers.cloudflare.com/pages/configuration/build-image/)
+```bash
+npm run deploy
+```
+
+此指令會先執行 TypeScript 檢查與正式建置，成功後才將 `dist/` 部署到 `keybloom-typing-game` 專案的 `main` 正式分支。完成後，以 CLI 回傳的正式網站網址分享給使用者。
+
+這是 Pages 的 Direct Upload 模式，推送 GitHub 本身不會觸發網站更新；需要自動部署時可再加入 GitHub Actions。同一個 Direct Upload 專案無法直接轉成 Pages 內建的 Git integration，若要改用該模式，需另外建立 Pages 專案。
+
+此版本沒有後端 API，不需設定 API 金鑰或資料庫。Wrangler 的登入資料由本機工具管理，請勿將憑證加入版本控制。
+
+- [Cloudflare CLI 直接部署說明](https://developers.cloudflare.com/pages/get-started/direct-upload/)
+- [Wrangler Pages 指令](https://developers.cloudflare.com/workers/wrangler/commands/pages/)
 
 ## 進度保存
 
