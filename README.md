@@ -20,15 +20,14 @@ npm run preview
 
 正式網站檔案會輸出至 `dist/`。部署前請確認鍵盤輸入、關卡解鎖與重新整理後的進度保存正常。
 
-## 部署到 Cloudflare Pages（CLI）
+## 部署到 Cloudflare（CLI）
 
-專案使用 Wrangler CLI 將本機建置好的 `dist/` 上傳到 Cloudflare Pages。程式碼保存在 [GitHub 私人儲存庫](https://github.com/nickycho/typing-game)。
+專案使用 Wrangler CLI 將本機建置好的 `dist/` 上傳到 Cloudflare Workers Static Assets。程式碼保存在 [GitHub 私人儲存庫](https://github.com/nickycho/typing-game)。
 
-首次部署前，先登入 Cloudflare 並建立 Pages 專案：
+首次部署前，先登入 Cloudflare：
 
 ```bash
 npx wrangler login
-npx wrangler pages project create keybloom-typing-game --production-branch main
 ```
 
 登入時需在瀏覽器完成授權。之後首次上線與每次更新都使用：
@@ -37,14 +36,14 @@ npx wrangler pages project create keybloom-typing-game --production-branch main
 npm run deploy
 ```
 
-此指令會先執行 TypeScript 檢查與正式建置，成功後才將 `dist/` 部署到 `keybloom-typing-game` 專案的 `main` 正式分支。完成後，以 CLI 回傳的正式網站網址分享給使用者。
+此指令會先執行 TypeScript 檢查與正式建置，成功後才依 `wrangler.jsonc` 將 `dist/` 部署到 `keybloom-typing-game`。首次執行時會建立 Worker；無須另外建立 Pages 專案。完成後，以 CLI 回傳的 `*.workers.dev` 正式網站網址分享給使用者。
 
-這是 Pages 的 Direct Upload 模式，推送 GitHub 本身不會觸發網站更新；需要自動部署時可再加入 GitHub Actions。同一個 Direct Upload 專案無法直接轉成 Pages 內建的 Git integration，若要改用該模式，需另外建立 Pages 專案。
+網站由 Cloudflare 直接提供靜態檔案，並設定 SPA 頁面回退。推送 GitHub 本身不會觸發網站更新；需要自動部署時可再加入 GitHub Actions。
 
 此版本沒有後端 API，不需設定 API 金鑰或資料庫。Wrangler 的登入資料由本機工具管理，請勿將憑證加入版本控制。
 
-- [Cloudflare CLI 直接部署說明](https://developers.cloudflare.com/pages/get-started/direct-upload/)
-- [Wrangler Pages 指令](https://developers.cloudflare.com/workers/wrangler/commands/pages/)
+- [Cloudflare Static Assets 部署說明](https://developers.cloudflare.com/workers/static-assets/get-started/)
+- [Cloudflare SPA 設定](https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/)
 
 ## 進度保存
 
