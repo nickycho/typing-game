@@ -2,6 +2,8 @@
 
 使用 React、TypeScript 與 Vite 製作的繁體中文打字遊戲。共 10 個關卡，每關命中 20 次即可前進；進度會自動保存在目前瀏覽器。
 
+[線上遊玩 KeyBloom](https://keybloom-typing-game.nickycho.workers.dev)
+
 ## 本機開發
 
 使用 Node.js 24.11.1（版本記錄於 `.node-version`）。
