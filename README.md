@@ -1,54 +1,62 @@
-# KeyBloom 英文打字練習
+# KeyBloom Typing Practice
 
-使用 React、TypeScript 與 Vite 製作的繁體中文打字遊戲。共 10 個關卡，每關命中 20 次即可前進；進度會自動保存在目前瀏覽器。
+KeyBloom is a multilingual English typing game built with React, TypeScript, and Vite. Its interface supports English, Traditional Chinese, Japanese, and Korean. Complete 20 hits in each of the 20 levels to advance. Progress is automatically saved in your browser.
 
-[線上遊玩 KeyBloom](https://keybloom-typing-game.nickycho.workers.dev)
+[Play KeyBloom](https://keybloom-typing-game.nickycho.workers.dev)
 
-## 本機開發
+## Local development
 
-使用 Node.js 24.11.1（版本記錄於 `.node-version`）。
+Use Node.js 24.11.1, as specified in `.node-version`.
 
 ```bash
 npm ci
 npm run dev
 ```
 
-## 正式建置與預覽
+## Production build and preview
 
 ```bash
 npm run build
 npm run preview
 ```
 
-正式網站檔案會輸出至 `dist/`。部署前請確認鍵盤輸入、關卡解鎖與重新整理後的進度保存正常。
+The production site is generated in `dist/`. Before deploying, check keyboard input, level unlocking, and progress persistence after a page refresh.
 
-## 部署到 Cloudflare（CLI）
+## Deploy to Cloudflare with the CLI
 
-專案使用 Wrangler CLI 將本機建置好的 `dist/` 上傳到 Cloudflare Workers Static Assets。程式碼保存在 [GitHub 私人儲存庫](https://github.com/nickycho/typing-game)。
+The project uses Wrangler CLI to upload the locally built `dist/` directory to Cloudflare Workers Static Assets. The source is hosted in the [GitHub repository](https://github.com/nickycho/typing-game).
 
-首次部署前，先登入 Cloudflare：
+Before your first deployment, log in to Cloudflare:
 
 ```bash
 npx wrangler login
 ```
 
-登入時需在瀏覽器完成授權。之後首次上線與每次更新都使用：
+Complete the authorization in your browser. For the initial deployment and subsequent updates, run:
 
 ```bash
 npm run deploy
 ```
 
-此指令會先執行 TypeScript 檢查與正式建置，成功後才依 `wrangler.jsonc` 將 `dist/` 部署到 `keybloom-typing-game`。首次執行時會建立 Worker；無須另外建立 Pages 專案。完成後，以 CLI 回傳的 `*.workers.dev` 正式網站網址分享給使用者。
+This command runs the TypeScript checks and production build, then deploys `dist/` to `keybloom-typing-game` using `wrangler.jsonc`. The first deployment creates the Worker; there is no need to create a separate Pages project. Share the `*.workers.dev` production URL returned by the CLI.
 
-網站由 Cloudflare 直接提供靜態檔案，並設定 SPA 頁面回退。推送 GitHub 本身不會觸發網站更新；需要自動部署時可再加入 GitHub Actions。
+Cloudflare serves the static files directly, with a fallback for single-page application routes. Pushing to GitHub does not automatically update the site; GitHub Actions can be added for automatic deployment.
 
-此版本沒有後端 API，不需設定 API 金鑰或資料庫。Wrangler 的登入資料由本機工具管理，請勿將憑證加入版本控制。
+This version has no backend API and does not require API keys or a database. Wrangler manages its credentials locally; do not commit them to version control.
 
-- [Cloudflare Static Assets 部署說明](https://developers.cloudflare.com/workers/static-assets/get-started/)
-- [Cloudflare SPA 設定](https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/)
+- [Cloudflare Static Assets deployment guide](https://developers.cloudflare.com/workers/static-assets/get-started/)
+- [Cloudflare SPA configuration](https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/)
 
-## 進度保存
+## Saving progress
 
-進度儲存在瀏覽器的 `localStorage`，儲存鍵為 `keybloom.progress.v1`。不同裝置、瀏覽器及網站網域的進度各自獨立；本機開發網址的進度不會自動搬到正式網址。清除網站資料或使用無痕模式可能使進度無法保留。
+Progress is stored in the browser's `localStorage` under `keybloom.progress.v1`. Each device, browser, and website origin has its own progress; progress from the local development URL does not automatically transfer to the production site. Clearing site data or using private browsing may prevent progress from being retained.
 
-目前以實體鍵盤操作；尚未提供帳號登入或跨裝置同步。
+The game is designed for a physical keyboard. Account sign-in and cross-device synchronization are not currently available.
+
+## Interface languages
+
+On the first visit, KeyBloom selects a supported language from the browser's `navigator.languages` or `navigator.language`. Chinese locale variants use Traditional Chinese, and English is the fallback when no supported language matches.
+
+Use the language menu in the header to switch languages at any time. The preference is stored separately in `localStorage` under `keybloom.locale.v1` and takes priority on later visits. Switching languages does not reset levels or scores. If storage is unavailable, the language can still be changed for the current session.
+
+Interface and level translations are maintained in `src/i18n/messages.ts`. The page title, description, and accessibility text also change with the selected language. The typing exercises continue to use the English letters A–Z.
